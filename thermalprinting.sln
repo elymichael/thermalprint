@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "thermalprinting", "thermalprinting\thermalprinting.csproj", "{58DB2510-0426-42B9-B2C8-E4F972F3ED73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "thermalprinting.Tests", "thermalprinting.Tests\thermalprinting.Tests.csproj", "{C83B13CC-7714-4216-AFCE-3C28C4F487B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58DB2510-0426-42B9-B2C8-E4F972F3ED73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58DB2510-0426-42B9-B2C8-E4F972F3ED73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58DB2510-0426-42B9-B2C8-E4F972F3ED73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58DB2510-0426-42B9-B2C8-E4F972F3ED73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C83B13CC-7714-4216-AFCE-3C28C4F487B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C83B13CC-7714-4216-AFCE-3C28C4F487B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C83B13CC-7714-4216-AFCE-3C28C4F487B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C83B13CC-7714-4216-AFCE-3C28C4F487B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74DBDCBE-16D9-474C-99A1-71F74C9E02EA}
+	EndGlobalSection
+EndGlobal
