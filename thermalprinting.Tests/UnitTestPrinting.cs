@@ -29,16 +29,16 @@ namespace thermalprinting.Tests
                             )))),
                new JProperty("sales", 
                     new JObject(
-                        new JProperty("SaleOrderID", "10"),
-                        new JProperty("SalesOrderControlID", "3"),
-                        new JProperty("CompanyID", "1"),
-                        new JProperty("PatientID", "1"),
-                        new JProperty("StatusId", "P"),
-                        new JProperty("TotalAmount", "450"),
-                        new JProperty("Quantity", "3"),
+                        new JProperty("saleOrderID", "10"),
+                        new JProperty("salesOrderControlID", "3"),
+                        new JProperty("companyID", "1"),
+                        new JProperty("patientID", "1"),
+                        new JProperty("statusId", "P"),
+                        new JProperty("totalAmount", "450"),
+                        new JProperty("quantity", "3"),
                         new JProperty("data", JObject.Parse(invoice_data)),
-                        new JProperty("CreationDate", DateTime.Now),
-                        new JProperty("UserID", "1")
+                        new JProperty("creationDate", DateTime.Now),
+                        new JProperty("userID", "1")
                     )));
 
             string dataprint = data.ToString();

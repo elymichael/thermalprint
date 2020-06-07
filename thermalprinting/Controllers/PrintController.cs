@@ -17,7 +17,7 @@
         [Route("api/Print/Send")]
         [AcceptVerbs("GET", "POST")]
         [HttpPost]
-        public IHttpActionResult Send(JObject data)
+        public IHttpActionResult Send([FromBody]JObject data)
         {
             try
             {
@@ -26,6 +26,10 @@
                     return BadRequest(ModelState);
                 }
 
+                if (data == null)
+                {
+                    return BadRequest("Check if the json is well formed.");
+                }
                 
                 ThermalReport report = new ThermalReport();
                 string invoice = report.generateInvoice(data);

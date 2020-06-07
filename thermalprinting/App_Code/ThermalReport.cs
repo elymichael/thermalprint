@@ -71,16 +71,16 @@ namespace thermalprinting
                         {
                             report.AppendLine("NCF:" + sales["data"]["payments"]["taxreceiptnumber"].Value<string>().PadRight(COST_TAM));
                         }
-                        if (sales["data"]["payments"]["cashier"] != null)
+                        if (sales["data"]["batch"]["name"] != null)
                         {
-                            report.AppendLine("Caja #:" + sales["data"]["payments"]["cashier"].Value<string>().PadRight(COST_TAM));
+                            report.AppendLine("Caja #:" + sales["data"]["batch"]["name"].Value<string>().PadRight(COST_TAM));
                         }
                     }
                 }
 
-                if (sales["SaleOrderID"] != null)
+                if (sales["data"]["invoiceid"] != null)
                 {
-                    report.AppendLine(("Venta No:" + sales["SaleOrderID"].Value<string>()).PadRight(COST_TAM));
+                    report.AppendLine(("Venta No:" + sales["data"]["invoiceid"].Value<string>()).PadRight(COST_TAM));
                 }
                 if (sales["data"].HasValues)
                 {
@@ -124,7 +124,7 @@ namespace thermalprinting
 
 
                         report.Append(string.Format("{0:N2}", "0").PadLeft(second_col_pad));
-                        report.AppendLine(string.Format("{0:N2}", sales["TotalAmount"].Value<string>()).PadLeft(third_col_pad));
+                        report.AppendLine(string.Format("{0:N2}", sales["totalAmount"].Value<string>()).PadLeft(third_col_pad));
 
 
                         report.AppendLine(" ");
@@ -156,26 +156,20 @@ namespace thermalprinting
                         report.AppendLine(string.Format("{0:N2}", 0.ToString("N2").PadLeft(third_col_pad)));
                         report.AppendLine(" ");
 
-                        report.AppendLine("TOTAL ARTICULOS VENDIDOS = " + sales["Quantity"].Value<string>());
+                        report.AppendLine("TOTAL ARTICULOS VENDIDOS = " + sales["quantity"].Value<string>());
 
                         report.AppendLine(" ");
                         report.AppendLine("      GRACIAS POR SU VISITA          ");
                         report.AppendLine(" ");
                         report.AppendLine(" ");
-                        report.AppendLine("Atendido Por: " + "Vendedor");
+
+                        if (sales["data"]["cashier"] != null) { 
+                            report.AppendLine("Atendido Por: " + sales["data"]["cashier"]["name"].Value<string>());
+                        }
                         report.AppendLine(" ");
                         report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
-                        report.AppendLine("_");
-                        string strResult = report.ToString();
+
+                        string strResult = report.ToString().Normalize(NormalizationForm.FormD);
                     }
                 }
             }
