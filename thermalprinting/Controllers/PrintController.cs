@@ -4,8 +4,11 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using System.Web.Http;
 
     public class PrintController : ApiController
@@ -14,7 +17,7 @@
         [Route("api/Print/Send")]
         [AcceptVerbs("GET", "POST")]
         [HttpPost]
-        public async Task<IHttpActionResult> Send(JObject data)
+        public IHttpActionResult Send(JObject data)
         {
             try
             {
@@ -25,20 +28,18 @@
 
                 
                 ThermalReport report = new ThermalReport();
-                report.generateInvoice(data);
-                //System.IO.File.WriteAllText("C:\\filename.txt", "contenido");
+                string invoice = report.generateInvoice(data);
 
-                //PrintPreviewDialog pp = new PrintPreviewDialog();
-                //PaperSize psize = new PaperSize("Custom", 100, 200);
-                //printDocument.DefaultPageSettings.PaperSize = psize;
-                //// 5 es el tamaño de las letras y 150 es el espacio extra
-                //printDocument.DefaultPageSettings.PaperSize.Height = 900 + (dtFactura.Rows.Count * 38);
-                //printDocument.DefaultPageSettings.PaperSize.Width = 300;
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string subFolderPath = Path.Combine(path, "Ofidental");
+                string pathtoPrint = string.Format("{0}{1}{2}.txt",
+                   subFolderPath,
+                   DateTime.Now.ToString("yyyyMMddhhmmss"),
+                   Guid.NewGuid().ToString());
 
+                System.IO.File.WriteAllText(pathtoPrint, invoice);
 
-                //printDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printPage); //add an event handler that will do the printing
-
-                //pp.Document = printDocument;
+                Print(pathtoPrint);                
             }
             catch (Exception ex)
             {
@@ -46,6 +47,27 @@
             }
 
             return Ok();
+        }
+
+        private void Print(string path)
+        {
+            if (File.Exists(path))
+            {
+                var printJob = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = path,
+                        UseShellExecute = true,
+                        Verb = "print",
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        WorkingDirectory = Path.GetDirectoryName(path)
+                    }
+                };
+
+                printJob.Start();
+            }
         }
     }
 }

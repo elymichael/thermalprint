@@ -34,8 +34,8 @@ namespace thermalprinting.Tests
                         new JProperty("CompanyID", "1"),
                         new JProperty("PatientID", "1"),
                         new JProperty("StatusId", "P"),
-                        new JProperty("TotalAmount", "1500"),
-                        new JProperty("Quantity", "4"),
+                        new JProperty("TotalAmount", "450"),
+                        new JProperty("Quantity", "3"),
                         new JProperty("data", JObject.Parse(invoice_data)),
                         new JProperty("CreationDate", DateTime.Now),
                         new JProperty("UserID", "1")
@@ -43,9 +43,10 @@ namespace thermalprinting.Tests
 
             string dataprint = data.ToString();
 
-            var task = Task.Run(async () => await print.Send(data));
-            
-            
+            print.Send(data);
+            //var task = Task.Run(async () => await print.Send(data));
+
+
         }
     }
 }
