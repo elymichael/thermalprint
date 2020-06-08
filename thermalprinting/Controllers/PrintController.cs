@@ -57,8 +57,14 @@
             try
             {
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string subFolderPath = Path.Combine(path, "Ofidental");
-                pathtoPrint = string.Format("{0}{1}{2}.txt",
+                string subFolderPath = Path.Combine(path, "Ofidental\\");
+
+                if (!Directory.Exists(subFolderPath))
+                {
+                    Directory.CreateDirectory(subFolderPath);
+                }
+
+                pathtoPrint = string.Format("{0}{1}_{2}.txt",
                    subFolderPath,
                    DateTime.Now.ToString("yyyyMMddhhmmss"),
                    Guid.NewGuid().ToString());

@@ -4,7 +4,7 @@ namespace thermalprinting
 {
     using System;
     using System.Text;
-    using System.Collections.Generic;    
+    using System.Collections.Generic;
     using Newtonsoft.Json.Linq;
 
     public class ThermalReport
@@ -46,10 +46,10 @@ namespace thermalprinting
                     if (oData["address"] != null)
                     {
                         IEnumerable<string> lines = SplitLine(oData["address"].Value<string>(), COST_TAM);
-                        foreach(string str in lines)
+                        foreach (string str in lines)
                         {
                             report.AppendLine(PadBoth(str, COST_TAM));
-                        }                        
+                        }
                     }
                     if (oData["rnc"] != null)
                     {
@@ -82,9 +82,12 @@ namespace thermalprinting
                         {
                             report.AppendLine("NCF:" + sales["data"]["payments"]["taxreceiptnumber"].Value<string>().PadRight(COST_TAM));
                         }
-                        if (sales["data"]["batch"]["name"] != null)
+                        if (sales["data"]["batch"] != null)
                         {
-                            report.AppendLine("Caja #:" + sales["data"]["batch"]["name"].Value<string>().PadRight(COST_TAM));
+                            if (sales["data"]["batch"]["name"] != null)
+                            {
+                                report.AppendLine("Caja #:" + sales["data"]["batch"]["name"].Value<string>().PadRight(COST_TAM));
+                            }
                         }
                     }
                 }
@@ -174,7 +177,8 @@ namespace thermalprinting
                         report.AppendLine(" ");
                         report.AppendLine(" ");
 
-                        if (sales["data"]["cashier"] != null) { 
+                        if (sales["data"]["cashier"] != null)
+                        {
                             report.AppendLine("Atendido Por: " + sales["data"]["cashier"]["name"].Value<string>());
                         }
                         report.AppendLine(" ");
