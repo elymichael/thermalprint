@@ -1,5 +1,5 @@
 ﻿namespace thermalprinting.Controllers
-{    
+{
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
@@ -30,47 +30,78 @@
                 {
                     return BadRequest("Check if the json is well formed.");
                 }
-                
+
                 ThermalReport report = new ThermalReport();
                 string invoice = report.generateInvoice(data);
 
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string subFolderPath = Path.Combine(path, "Ofidental");
-                string pathtoPrint = string.Format("{0}{1}{2}.txt",
-                   subFolderPath,
-                   DateTime.Now.ToString("yyyyMMddhhmmss"),
-                   Guid.NewGuid().ToString());
+                string pathtoPrint = GetFile(invoice);
 
-                System.IO.File.WriteAllText(pathtoPrint, invoice);
-
-                Print(pathtoPrint);                
+                Print(pathtoPrint);
             }
             catch (Exception ex)
             {
-                throw ex;
+                return BadRequest(string.Format("Error:{0}, Stacktrace:{1}", ex.Message, ex.StackTrace));
             }
 
             return Ok();
         }
 
+        /// <summary>
+        /// Generate the filename in the local app data and write the file with the invoice to print.
+        /// </summary>
+        /// <param name="content">Content to print.</param>
+        /// <returns>Filename.</returns>
+        private string GetFile(string content)
+        {
+            string pathtoPrint = string.Empty;
+            try
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string subFolderPath = Path.Combine(path, "Ofidental");
+                pathtoPrint = string.Format("{0}{1}{2}.txt",
+                   subFolderPath,
+                   DateTime.Now.ToString("yyyyMMddhhmmss"),
+                   Guid.NewGuid().ToString());
+
+                File.WriteAllText(pathtoPrint, content);                
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error writing file report: " + ex.Message);
+            }
+
+            return pathtoPrint;
+        }
+
+        /// <summary>
+        /// Send the file to print.
+        /// </summary>
+        /// <param name="path">Filename.</param>
         private void Print(string path)
         {
-            if (File.Exists(path))
+            try
             {
-                var printJob = new Process
+                if (File.Exists(path))
                 {
-                    StartInfo = new ProcessStartInfo
+                    var printJob = new Process
                     {
-                        FileName = path,
-                        UseShellExecute = true,
-                        Verb = "print",
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        WorkingDirectory = Path.GetDirectoryName(path)
-                    }
-                };
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = path,
+                            UseShellExecute = true,
+                            Verb = "print",
+                            CreateNoWindow = true,
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            WorkingDirectory = Path.GetDirectoryName(path)
+                        }
+                    };
 
-                printJob.Start();
+                    printJob.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error printing report: " + ex.Message);
             }
         }
     }

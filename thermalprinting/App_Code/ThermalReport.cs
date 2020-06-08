@@ -9,7 +9,13 @@ namespace thermalprinting
 
     public class ThermalReport
     {
-        public string PadBoth(string source, int length)
+        /// <summary>
+        /// Add Pad to both side of the string.
+        /// </summary>
+        /// <param name="source">content to add pad.</param>
+        /// <param name="length">length of the content.</param>
+        /// <returns></returns>
+        private string PadBoth(string source, int length)
         {
 
             int spaces = length - source.Length;
@@ -17,6 +23,11 @@ namespace thermalprinting
             return source.PadLeft(padLeft).PadRight(length);
         }
 
+        /// <summary>
+        /// Generate the invoice report.
+        /// </summary>
+        /// <param name="data">Json data</param>
+        /// <returns>string report.</returns>
         public string generateInvoice(JObject data)
         {
             const int COST_TAM = 30;
@@ -175,12 +186,18 @@ namespace thermalprinting
             }
             catch (Exception ex)
             {
-                throw new Exception("Printing error: " + ex.Message);
+                throw new Exception("Error generating report: " + ex.Message);
             }
             return report.ToString();
         }
 
-        IEnumerable<string> SplitLine(string str, int maxChunkSize)
+        /// <summary>
+        /// Split a string by chunk site.
+        /// </summary>
+        /// <param name="str">string to split.</param>
+        /// <param name="maxChunkSize">Maximun chunk size.</param>
+        /// <returns>return string array.</returns>
+        private IEnumerable<string> SplitLine(string str, int maxChunkSize)
         {
             for (int i = 0; i < str.Length; i += maxChunkSize)
                 yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
