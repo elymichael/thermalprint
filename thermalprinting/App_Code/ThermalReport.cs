@@ -9,20 +9,7 @@ namespace thermalprinting
 
     public class ThermalReport
     {
-        /// <summary>
-        /// Add Pad to both side of the string.
-        /// </summary>
-        /// <param name="source">content to add pad.</param>
-        /// <param name="length">length of the content.</param>
-        /// <returns></returns>
-        private string PadBoth(string source, int length)
-        {
-
-            int spaces = length - source.Length;
-            int padLeft = spaces / 2 + source.Length;
-            return source.PadLeft(padLeft).PadRight(length);
-        }
-
+        private const int COST_TAM = 30;
         /// <summary>
         /// Generate the invoice report.
         /// </summary>
@@ -30,8 +17,6 @@ namespace thermalprinting
         /// <returns>string report.</returns>
         public string generateInvoice(JObject data)
         {
-            const int COST_TAM = 30;
-
             StringBuilder report = new StringBuilder();
             try
             {
@@ -193,6 +178,99 @@ namespace thermalprinting
                 throw new Exception("Error generating report: " + ex.Message);
             }
             return report.ToString();
+        }
+
+        /// <summary>
+        /// Generate the invoice report.
+        /// </summary>
+        /// <param name="data">Json data</param>
+        /// <returns>string report.</returns>
+        public string generateTicket(JObject data)
+        {
+            StringBuilder report = new StringBuilder();
+            try
+            {
+                JToken company = data.GetValue("company");
+                JToken ticket = data.GetValue("ticket");
+
+                report.AppendLine(PadBoth(company["Name"].Value<string>(), COST_TAM));
+                if (company["data"].HasValues)
+                {
+                    JObject oData = company["data"].Value<JObject>();
+
+                    if (oData["address"] != null)
+                    {
+                        IEnumerable<string> lines = SplitLine(oData["address"].Value<string>(), COST_TAM);
+                        foreach (string str in lines)
+                        {
+                            report.AppendLine(PadBoth(str, COST_TAM));
+                        }
+                    }
+                    if (oData["rnc"] != null)
+                    {
+                        report.AppendLine(PadBoth(("RNC:" + oData["rnc"].Value<string>()), COST_TAM));
+                    }
+                    report.AppendLine(" ");
+                    if (oData["authorized"] != null)
+                    {
+                        report.AppendLine(PadBoth("AUTORIZADO POR DGII", COST_TAM));
+                    }
+                }
+
+                report.AppendLine(" ");
+                if (ticket["date"] != null)
+                {
+                    report.AppendLine(Convert.ToDateTime(ticket["date"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
+                }
+
+                if(ticket["ticketnumber"] != null)
+                {
+                    report.AppendLine(("Venta No:" + ticket["ticketnumber"].Value<string>()).PadRight(COST_TAM));
+                }
+
+                report.AppendLine("TIPO DE ENVASE:" + ticket["boxtype"].Value<string>().PadRight(COST_TAM));
+                report.AppendLine("TIPO DE ENVASE:" + Convert.ToDateTime(ticket["deliverydate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
+                
+                report.AppendLine(" ");
+                report.AppendLine("---------------------------------------");
+                report.AppendLine("NOMBRE: " + ticket["customer"]["name"].Value<string>().PadRight(COST_TAM));
+                report.AppendLine("DOCUMENTO: " + ticket["customer"]["document"].Value<string>().PadRight(COST_TAM));
+                report.AppendLine("---------------------------------------");
+                report.AppendLine(" ");
+
+                report.AppendLine(" ");
+                report.AppendLine("      GRACIAS POR SU VISITA          ");
+                report.AppendLine(" ");
+                report.AppendLine(" ");
+
+                if (ticket["cashier"] != null)
+                {
+                    report.AppendLine("Atendido Por: " + ticket["cashier"].Value<string>().PadRight(COST_TAM));
+                }
+                report.AppendLine(" ");
+                report.AppendLine(" ");
+
+                string strResult = report.ToString().Normalize(NormalizationForm.FormD);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error generating report: " + ex.Message);
+            }
+            return report.ToString();
+        }
+        /// <summary>
+        /// Add Pad to both side of the string.
+        /// </summary>
+        /// <param name="source">content to add pad.</param>
+        /// <param name="length">length of the content.</param>
+        /// <returns></returns>
+        private string PadBoth(string source, int length)
+        {
+
+            int spaces = length - source.Length;
+            int padLeft = spaces / 2 + source.Length;
+            return source.PadLeft(padLeft).PadRight(length);
         }
 
         /// <summary>
