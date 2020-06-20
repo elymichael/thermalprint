@@ -229,12 +229,12 @@ namespace thermalprinting
                 }
 
                 report.AppendLine("TIPO DE ENVASE:" + ticket["boxtype"].Value<string>().PadRight(COST_TAM));
-                report.AppendLine("TIPO DE ENVASE:" + Convert.ToDateTime(ticket["deliverydate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
+                report.AppendLine("FECHA DE ENTREGA:" + Convert.ToDateTime(ticket["deliverydate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
                 
                 report.AppendLine(" ");
                 report.AppendLine("---------------------------------------");
-                report.AppendLine("NOMBRE: " + ticket["customer"]["name"].Value<string>().PadRight(COST_TAM));
-                report.AppendLine("DOCUMENTO: " + ticket["customer"]["document"].Value<string>().PadRight(COST_TAM));
+                report.AppendLine("NOMBRE:" + ticket["customer"]["name"].Value<string>().PadRight(COST_TAM));
+                report.AppendLine("DOCUMENTO:" + ticket["customer"]["document"].Value<string>().PadRight(COST_TAM));
                 report.AppendLine("---------------------------------------");
                 report.AppendLine(" ");
 
@@ -245,7 +245,7 @@ namespace thermalprinting
 
                 if (ticket["cashier"] != null)
                 {
-                    report.AppendLine("Atendido Por: " + ticket["cashier"].Value<string>().PadRight(COST_TAM));
+                    report.AppendLine("Atendido Por:" + ticket["cashier"].Value<string>().PadRight(COST_TAM));
                 }
                 report.AppendLine(" ");
                 report.AppendLine(" ");
