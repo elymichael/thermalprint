@@ -13,30 +13,6 @@
 
     public class PrintController : BaseController
     {
-        [AllowAnonymous]
-        [Route("api/Print/Send")]
-        [AcceptVerbs("GET", "POST")]
-        [HttpPost]
-        public IHttpActionResult Send([FromBody]JObject data)
-        {
-            try
-            {
-                load(data);
-
-                ThermalReport report = new ThermalReport();
-                string invoice = report.generateInvoice(data);
-
-                string pathtoPrint = GetFile(invoice);
-
-                Print(pathtoPrint);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(string.Format("Error:{0}, Stacktrace:{1}", ex.Message, ex.StackTrace));
-            }
-
-            return Ok();
-        }
 
         [AllowAnonymous]
         [Route("api/Print/Invoice")]
