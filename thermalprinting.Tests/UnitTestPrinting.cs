@@ -43,7 +43,7 @@ namespace thermalprinting.Tests
 
             string dataprint = data.ToString();
 
-            print.Send(data);
+            print.Invoice(data);
             //var task = Task.Run(async () => await print.Send(data));
 
 
