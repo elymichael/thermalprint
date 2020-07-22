@@ -7,7 +7,7 @@
     using System.Web;
     using Newtonsoft.Json.Linq;
 
-    public class ThermalReportBase
+    internal class ThermalReportBase
     {
         private readonly JObject _data;
         protected JObject Data { get { return _data; } }
@@ -87,6 +87,11 @@
         {
             for (int i = 0; i < str.Length; i += maxChunkSize)
                 yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
+        }
+
+        protected string GetDateFormatted(string value)
+        {
+            return Convert.ToDateTime(value).ToString("dd/MM/yyyy hh:mm:ss");
         }
     }
 }

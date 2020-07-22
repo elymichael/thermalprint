@@ -1,12 +1,14 @@
 ﻿namespace thermalprinting
 {
-    public static class RestApiConstant
+    internal static class RestApiConstant
     {
         public const string CompanyNode = "company";
         public const string SalesNode = "sales";
 
         public const int COST_TAM = 30;
         public const string BlankSpace = " ";
+        public const string LinesCharacter = "---------------------------------------";
+
         public static class Company
         {
             public const string Name = "Name";

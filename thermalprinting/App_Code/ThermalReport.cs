@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using Newtonsoft.Json.Linq;
 
-    public class ThermalReport : ThermalReportBase
+    internal class ThermalReport : ThermalReportBase
     {
         public ThermalReport(JObject data) : base(data)
         {
@@ -16,7 +16,7 @@
         /// </summary>
         /// <param name="data">Json data</param>
         /// <returns>string report.</returns>
-        public string generateInvoice()
+        public string GenerateInvoice()
         {
             StringBuilder report = new StringBuilder();
             try
@@ -71,12 +71,12 @@
                     }
                 }
 
-                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.LinesCharacter);
                 //"   FACTURA PARA CONSUMIDORES FINALES   "
                 report.AppendLine(PadBoth("FACTURA DE VENTAS", RestApiConstant.COST_TAM));
-                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.LinesCharacter);
                 report.AppendLine("DESCIPCION           ITBIS     VALOR   ");
-                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.LinesCharacter);
 
                 if (sales["data"].HasValues)
                 {
@@ -115,7 +115,7 @@
                         report.Append(strLineaFinal.PadRight(first_col_pad));
                         report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
                         report.AppendLine(string.Format("{0:N2}", 0).PadLeft(third_col_pad));
-                        report.AppendLine("---------------------------------------");
+                        report.AppendLine(RestApiConstant.LinesCharacter);
 
                         if (sales["data"]["payments"] != null)
                         {
@@ -126,7 +126,7 @@
                                 report.AppendLine(string.Format("{0:N2}", item["payment"]["amount"].Value<string>()).PadLeft(third_col_pad));
                             }
                         }
-                        report.AppendLine("---------------------------------------");
+                        report.AppendLine(RestApiConstant.LinesCharacter);
                         //  strLinea.AppendLine(" ITEMS * SON GRAVADOS CON 18% DE ITBIS");
                         //   strLinea.AppendLine(" ITEMS # SON GRAVADOS CON 16% DE ITBIS");
                         strLineaFinal = "       ITBIS ( 18% ) ";
@@ -164,7 +164,7 @@
         /// </summary>
         /// <param name="data">Json data</param>
         /// <returns>string report.</returns>
-        public string generateTicket()
+        public string GenerateTicket()
         {
             StringBuilder report = new StringBuilder();
             try
@@ -176,7 +176,7 @@
 
                 if (ticket["date"] != null)
                 {
-                    report.AppendLine(Convert.ToDateTime(ticket["date"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
+                    report.AppendLine(GetDateFormatted(ticket["date"].Value<string>()).PadRight(RestApiConstant.COST_TAM));
                 }
 
                 if (ticket["ticketnumber"] != null)
@@ -185,13 +185,13 @@
                 }
 
                 report.AppendLine("TIPO DE ENVASE:" + ticket["boxtype"].Value<string>().PadRight(RestApiConstant.COST_TAM));
-                report.AppendLine("FECHA DE ENTREGA:" + Convert.ToDateTime(ticket["deliverydate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
+                report.AppendLine("FECHA DE ENTREGA:" + GetDateFormatted(ticket["deliverydate"].Value<string>()).PadRight(RestApiConstant.COST_TAM));
 
                 report.AppendLine(RestApiConstant.BlankSpace);
-                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.LinesCharacter);
                 report.AppendLine("NOMBRE:" + ticket["customer"]["name"].Value<string>().PadRight(RestApiConstant.COST_TAM));
                 report.AppendLine("DOCUMENTO:" + ticket["customer"]["document"].Value<string>().PadRight(RestApiConstant.COST_TAM));
-                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.LinesCharacter);
                 report.AppendLine(RestApiConstant.BlankSpace);
 
                 report.AppendLine(RestApiConstant.BlankSpace);
@@ -221,7 +221,7 @@
         /// </summary>
         /// <param name="data">Json data</param>
         /// <returns>string report.</returns>
-        public string generateReceipts()
+        public string GenerateReceipts()
         {
             StringBuilder report = new StringBuilder();
             try
@@ -237,7 +237,7 @@
 
                 if (receipt["date"] != null)
                 {
-                    report.AppendLine(Convert.ToDateTime(receipt["date"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
+                    report.AppendLine(GetDateFormatted(receipt["date"].Value<string>()).PadRight(RestApiConstant.COST_TAM));
                 }
 
                 if (receipt["ticketnumber"] != null)
@@ -264,7 +264,7 @@
                 report.Append(strLineaFinal.PadRight(first_col_pad));
                 report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
                 report.AppendLine(string.Format("{0:N2}", 0).PadLeft(third_col_pad));
-                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.LinesCharacter);
 
                 report.AppendLine(RestApiConstant.BlankSpace);
                 strLineaFinal = "SALDO CONTABLE".PadRight(name_length, ' ');
@@ -289,12 +289,12 @@
                 }
                 if (receipt["data"] != null)
                 {
-                    report.AppendLine("---------------------------------------");
+                    report.AppendLine(RestApiConstant.LinesCharacter);
                     report.AppendLine(RestApiConstant.BlankSpace);
-                    report.AppendLine("---------------------------------------");
+                    report.AppendLine(RestApiConstant.LinesCharacter);
                     report.AppendLine("NOMBRE:" + receipt["data"]["customer"]["name"].Value<string>().PadRight(RestApiConstant.COST_TAM));
                     report.AppendLine("DOCUMENTO:" + receipt["data"]["customer"]["rnc"].Value<string>().PadRight(RestApiConstant.COST_TAM));
-                    report.AppendLine("---------------------------------------");
+                    report.AppendLine(RestApiConstant.LinesCharacter);
                     report.AppendLine(RestApiConstant.BlankSpace);
                 }
                 report.AppendLine(RestApiConstant.BlankSpace);

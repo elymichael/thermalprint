@@ -25,7 +25,7 @@
                 base.Load(data);
 
                 ThermalReport report = new ThermalReport(data);
-                string invoice = report.generateInvoice();
+                string invoice = report.GenerateInvoice();
 
                 string pathtoPrint = GetFile(invoice);
 
@@ -50,7 +50,7 @@
                 Load(data);
 
                 ThermalReport report = new ThermalReport(data);
-                string invoice = report.generateTicket();
+                string invoice = report.GenerateTicket();
 
                 string pathtoPrint = GetFile(invoice);
 
@@ -75,7 +75,7 @@
                 Load(data);
 
                 ThermalReport report = new ThermalReport(data);
-                string invoice = report.generateReceipts();
+                string invoice = report.GenerateReceipts();
 
                 string pathtoPrint = GetFile(invoice);
 
