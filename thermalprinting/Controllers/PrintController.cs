@@ -22,10 +22,10 @@
         {
             try
             {
-                load(data);
+                base.Load(data);
 
-                ThermalReport report = new ThermalReport();
-                string invoice = report.generateInvoice(data);
+                ThermalReport report = new ThermalReport(data);
+                string invoice = report.generateInvoice();
 
                 string pathtoPrint = GetFile(invoice);
 
@@ -47,10 +47,35 @@
         {
             try
             {
-                load(data);
+                Load(data);
 
-                ThermalReport report = new ThermalReport();
-                string invoice = report.generateTicket(data);
+                ThermalReport report = new ThermalReport(data);
+                string invoice = report.generateTicket();
+
+                string pathtoPrint = GetFile(invoice);
+
+                Print(pathtoPrint);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(string.Format("Error:{0}, Stacktrace:{1}", ex.Message, ex.StackTrace));
+            }
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [Route("api/Print/Receipts")]
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public IHttpActionResult Receipts([FromBody]JObject data)
+        {
+            try
+            {
+                Load(data);
+
+                ThermalReport report = new ThermalReport(data);
+                string invoice = report.generateReceipts();
 
                 string pathtoPrint = GetFile(invoice);
 

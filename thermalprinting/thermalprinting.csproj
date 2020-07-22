@@ -89,7 +89,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Code\RestApiConstant.cs" />
     <Compile Include="App_Code\ThermalReport.cs" />
+    <Compile Include="App_Code\ThermalReportBase.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\PrintController.cs" />

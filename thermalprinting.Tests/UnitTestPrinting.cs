@@ -14,7 +14,7 @@ namespace thermalprinting.Tests
         [TestMethod]
         public void TestMethodPrintingInvoice()
         {
-            thermalprinting.Controllers.PrintController print = new Controllers.PrintController();
+            Controllers.PrintController print = new Controllers.PrintController();
             string invoice_data = @"{    ""payments"": {      ""taxreceiptnumbertype"": ""00"",      ""details"": [        {          ""payment"": {            ""amount"": 450,            ""paymentmethod"": {              ""value"": ""E"",              ""text"": ""Efectivo""            }          }        }      ]    },    ""items"": [      {        ""productID"": 19,        ""name"": ""Equilibración de oclusión"",        ""price"": ""100"",        ""description"": ""Equilibración de oclusión"",        ""quantity"": 2,        ""itbis"": 0      },      {        ""productID"": 18,        ""name"": ""Ferulización"",        ""price"": ""250"",        ""description"": ""Ferulización"",        ""quantity"": 1,        ""itbis"": 0      }    ]  }";
             
 
@@ -43,10 +43,86 @@ namespace thermalprinting.Tests
 
             string dataprint = data.ToString();
 
-            print.Invoice(data);
-            //var task = Task.Run(async () => await print.Send(data));
+            print.Invoice(data);            
+        }
 
+        [TestMethod]
+        public void TestMethodPrintingTickets()
+        {
+            Controllers.PrintController print = new Controllers.PrintController();
+        }
 
+        [TestMethod]
+        public void TestMethodPrintingReceipts()
+        {
+            Controllers.PrintController print = new Controllers.PrintController();
+
+            string dataprint = @"{
+  ""company"": {
+    ""CompanyID"": 1,
+    ""Name"": ""Facultad de Odontologia"",
+    ""data"": {
+      ""address"": ""Calle Cristobal de Llerenas, Campus Alma Mater, Zona Universitaria."",
+      ""phone"": ""(809) 535-8274 ext. 3184"",
+      ""contact"": ""Angel Nadal"",
+      ""rnc"": ""00117292896"",
+      ""companyGroupID"": 1
+    }
+  },
+  ""receipt"": {
+    ""id"": 1,
+    ""date"": ""2020-07-22T01:22:28.782Z"",
+    ""ticketnumber"": ""r04dvs6o8dkcwomkev"",
+    ""totalAmount"": 250,
+    ""totalPayment"": 200,
+    ""data"": {
+      ""payments"": {
+        ""customer"": {
+          ""ID"": ""C2"",
+          ""customerID"": 2,
+          ""patientID"": 0,
+          ""type"": ""C"",
+          ""searchresult"": ""Miledys Taveras (001151945780) "",
+          ""name"": ""Miledys Taveras"",
+          ""documentId"": ""001151945780""
+        },
+        ""data"": {
+          ""payments"": {
+            ""taxreceiptnumbertype"": ""00"",
+            ""details"": [
+              {
+                ""payment"": {
+                  ""amount"": 50,
+                  ""paymentmethod"": {
+                    ""value"": ""E"",
+                    ""text"": ""Efectivo""
+                  },
+                  ""change"": -50
+                }
+              }
+            ]
+          }
+        },
+        ""amount"": ""50"",
+        ""description"": ""Pago de tercera cuota"",
+        ""applyApyment"": true,
+        ""created"": ""2020-07-22T01:22:23.002Z""
+      },
+      ""customer"": {
+        ""id"": ""C2"",
+        ""rnc"": ""001151945780"",
+        ""name"": ""Miledys Taveras""
+      },
+      ""cashier"": {
+        ""name"": ""Ely Michael Núñez De la Rosa""
+      }
+    }
+  }
+}";
+
+            JObject data = JObject.Parse(dataprint);
+
+            print.Receipts(data);
         }
     }
 }

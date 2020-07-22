@@ -1,61 +1,40 @@
-﻿
-
-namespace thermalprinting
+﻿namespace thermalprinting
 {
     using System;
     using System.Text;
     using System.Collections.Generic;
     using Newtonsoft.Json.Linq;
 
-    public class ThermalReport
+    public class ThermalReport : ThermalReportBase
     {
-        private const int COST_TAM = 30;
+        public ThermalReport(JObject data) : base(data)
+        {
+
+        }
         /// <summary>
         /// Generate the invoice report.
         /// </summary>
         /// <param name="data">Json data</param>
         /// <returns>string report.</returns>
-        public string generateInvoice(JObject data)
+        public string generateInvoice()
         {
             StringBuilder report = new StringBuilder();
             try
             {
-                JToken company = data.GetValue("company");
-                JToken sales = data.GetValue("sales");
+                JToken company = Data.GetValue(RestApiConstant.CompanyNode);
+                JToken sales = Data.GetValue(RestApiConstant.SalesNode);
 
-                report.AppendLine(PadBoth(company["Name"].Value<string>(), COST_TAM));
-                if (company["data"].HasValues)
-                {
-                    JObject oData = company["data"].Value<JObject>();
+                report.Append(GetHeader());
 
-                    if (oData["address"] != null)
-                    {
-                        IEnumerable<string> lines = SplitLine(oData["address"].Value<string>(), COST_TAM);
-                        foreach (string str in lines)
-                        {
-                            report.AppendLine(PadBoth(str, COST_TAM));
-                        }
-                    }
-                    if (oData["rnc"] != null)
-                    {
-                        report.AppendLine(PadBoth(("RNC:" + oData["rnc"].Value<string>()), COST_TAM));
-                    }
-                    report.AppendLine(" ");
-                    if (oData["authorized"] != null)
-                    {
-                        report.AppendLine(PadBoth("AUTORIZADO POR DGII", COST_TAM));
-                    }
-                }
-                report.AppendLine(" ");
                 if (sales["CreationDate"] != null)
                 {
-                    report.AppendLine(Convert.ToDateTime(sales["CreationDate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
+                    report.AppendLine(Convert.ToDateTime(sales["CreationDate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
                 }
-                if (company["data"].HasValues)
+                if (company[RestApiConstant.Company.Data].HasValues)
                 {
-                    if (company["data"]["nif"] != null)
+                    if (company[RestApiConstant.Company.Data][RestApiConstant.Company.NIF] != null)
                     {
-                        report.AppendLine(PadBoth(("NIF:" + company["data"]["nif"].Value<string>()), COST_TAM));
+                        report.AppendLine(PadBoth(("NIF:" + company[RestApiConstant.Company.Data][RestApiConstant.Company.NIF].Value<string>()), RestApiConstant.COST_TAM));
                     }
                 }
 
@@ -65,13 +44,13 @@ namespace thermalprinting
                     {
                         if (sales["data"]["payments"]["taxreceiptnumber"] != null)
                         {
-                            report.AppendLine("NCF:" + sales["data"]["payments"]["taxreceiptnumber"].Value<string>().PadRight(COST_TAM));
+                            report.AppendLine("NCF:" + sales["data"]["payments"]["taxreceiptnumber"].Value<string>().PadRight(RestApiConstant.COST_TAM));
                         }
                         if (sales["data"]["batch"] != null)
                         {
                             if (sales["data"]["batch"]["name"] != null)
                             {
-                                report.AppendLine("Caja #:" + sales["data"]["batch"]["name"].Value<string>().PadRight(COST_TAM));
+                                report.AppendLine("Caja #:" + sales["data"]["batch"]["name"].Value<string>().PadRight(RestApiConstant.COST_TAM));
                             }
                         }
                     }
@@ -79,7 +58,7 @@ namespace thermalprinting
 
                 if (sales["data"]["invoiceid"] != null)
                 {
-                    report.AppendLine(("Venta No:" + sales["data"]["invoiceid"].Value<string>()).PadRight(COST_TAM));
+                    report.AppendLine(("Venta No:" + sales["data"]["invoiceid"].Value<string>()).PadRight(RestApiConstant.COST_TAM));
                 }
                 if (sales["data"].HasValues)
                 {
@@ -87,14 +66,14 @@ namespace thermalprinting
                     {
                         if (sales["data"]["customer"]["rnc"] != null)
                         {
-                            report.AppendLine("RNC/Cliente:" + sales["data"]["customer"]["rnc"].Value<string>().PadRight(COST_TAM));
+                            report.AppendLine("RNC/Cliente:" + sales["data"]["customer"]["rnc"].Value<string>().PadRight(RestApiConstant.COST_TAM));
                         }
                     }
                 }
 
                 report.AppendLine("---------------------------------------");
                 //"   FACTURA PARA CONSUMIDORES FINALES   "
-                report.AppendLine(PadBoth("FACTURA DE VENTAS", COST_TAM));
+                report.AppendLine(PadBoth("FACTURA DE VENTAS", RestApiConstant.COST_TAM));
                 report.AppendLine("---------------------------------------");
                 report.AppendLine("DESCIPCION           ITBIS     VALOR   ");
                 report.AppendLine("---------------------------------------");
@@ -117,7 +96,7 @@ namespace thermalprinting
                             report.AppendLine(string.Format("{0:N2}", item["quantity"].Value<string>()).PadLeft(first_col_pad));
                         }
 
-                        report.AppendLine(" ");
+                        report.AppendLine(RestApiConstant.BlankSpace);
                         string strLineaFinal = "TOTAL A PAGAR".PadRight(name_length, ' ');
                         report.Append(strLineaFinal.PadRight(first_col_pad));
 
@@ -126,15 +105,15 @@ namespace thermalprinting
                         report.AppendLine(string.Format("{0:N2}", sales["totalAmount"].Value<string>()).PadLeft(third_col_pad));
 
 
-                        report.AppendLine(" ");
+                        report.AppendLine(RestApiConstant.BlankSpace);
                         strLineaFinal = "TOTAL PAGADO".PadRight(first_col_pad, ' ');
                         report.Append(strLineaFinal.PadRight(first_col_pad));
-                        report.Append(" ".PadLeft(second_col_pad));
+                        report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
                         report.AppendLine(string.Format("{0:N2}", 0).PadLeft(third_col_pad));
 
                         strLineaFinal = "CAMBIO".PadRight(name_length, ' ');
                         report.Append(strLineaFinal.PadRight(first_col_pad));
-                        report.Append(" ".PadLeft(second_col_pad));
+                        report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
                         report.AppendLine(string.Format("{0:N2}", 0).PadLeft(third_col_pad));
                         report.AppendLine("---------------------------------------");
 
@@ -143,7 +122,7 @@ namespace thermalprinting
                             foreach (JToken item in sales["data"]["payments"]["details"])
                             {
                                 report.Append(item["payment"]["paymentmethod"]["text"].Value<string>().PadRight(name_length, ' ').PadRight(first_col_pad));
-                                report.Append(" ".PadLeft(second_col_pad));
+                                report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
                                 report.AppendLine(string.Format("{0:N2}", item["payment"]["amount"].Value<string>()).PadLeft(third_col_pad));
                             }
                         }
@@ -153,21 +132,21 @@ namespace thermalprinting
                         strLineaFinal = "       ITBIS ( 18% ) ";
                         report.Append(strLineaFinal.PadRight(first_col_pad));
                         report.AppendLine(string.Format("{0:N2}", 0.ToString("N2").PadLeft(third_col_pad)));
-                        report.AppendLine(" ");
+                        report.AppendLine(RestApiConstant.BlankSpace);
 
                         report.AppendLine("TOTAL ARTICULOS VENDIDOS = " + sales["quantity"].Value<string>());
 
-                        report.AppendLine(" ");
+                        report.AppendLine(RestApiConstant.BlankSpace);
                         report.AppendLine("      GRACIAS POR SU VISITA          ");
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
+                        report.AppendLine(RestApiConstant.BlankSpace);
+                        report.AppendLine(RestApiConstant.BlankSpace);
 
                         if (sales["data"]["cashier"] != null)
                         {
                             report.AppendLine("Atendido Por: " + sales["data"]["cashier"]["name"].Value<string>());
                         }
-                        report.AppendLine(" ");
-                        report.AppendLine(" ");
+                        report.AppendLine(RestApiConstant.BlankSpace);
+                        report.AppendLine(RestApiConstant.BlankSpace);
 
                         string strResult = report.ToString().Normalize(NormalizationForm.FormD);
                     }
@@ -185,70 +164,47 @@ namespace thermalprinting
         /// </summary>
         /// <param name="data">Json data</param>
         /// <returns>string report.</returns>
-        public string generateTicket(JObject data)
+        public string generateTicket()
         {
             StringBuilder report = new StringBuilder();
             try
             {
-                JToken company = data.GetValue("company");
-                JToken ticket = data.GetValue("ticket");
+                //JToken company = data.GetValue("company");
+                JToken ticket = Data.GetValue("ticket");
 
-                report.AppendLine(PadBoth(company["Name"].Value<string>(), COST_TAM));
-                if (company["data"].HasValues)
-                {
-                    JObject oData = company["data"].Value<JObject>();
+                report.Append(GetHeader());
 
-                    if (oData["address"] != null)
-                    {
-                        IEnumerable<string> lines = SplitLine(oData["address"].Value<string>(), COST_TAM);
-                        foreach (string str in lines)
-                        {
-                            report.AppendLine(PadBoth(str, COST_TAM));
-                        }
-                    }
-                    if (oData["rnc"] != null)
-                    {
-                        report.AppendLine(PadBoth(("RNC:" + oData["rnc"].Value<string>()), COST_TAM));
-                    }
-                    report.AppendLine(" ");
-                    if (oData["authorized"] != null)
-                    {
-                        report.AppendLine(PadBoth("AUTORIZADO POR DGII", COST_TAM));
-                    }
-                }
-
-                report.AppendLine(" ");
                 if (ticket["date"] != null)
                 {
-                    report.AppendLine(Convert.ToDateTime(ticket["date"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
+                    report.AppendLine(Convert.ToDateTime(ticket["date"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
                 }
 
-                if(ticket["ticketnumber"] != null)
+                if (ticket["ticketnumber"] != null)
                 {
-                    report.AppendLine(("Venta No:" + ticket["ticketnumber"].Value<string>()).PadRight(COST_TAM));
+                    report.AppendLine(("Venta No:" + ticket["ticketnumber"].Value<string>()).PadRight(RestApiConstant.COST_TAM));
                 }
 
-                report.AppendLine("TIPO DE ENVASE:" + ticket["boxtype"].Value<string>().PadRight(COST_TAM));
-                report.AppendLine("FECHA DE ENTREGA:" + Convert.ToDateTime(ticket["deliverydate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(COST_TAM));
-                
-                report.AppendLine(" ");
-                report.AppendLine("---------------------------------------");
-                report.AppendLine("NOMBRE:" + ticket["customer"]["name"].Value<string>().PadRight(COST_TAM));
-                report.AppendLine("DOCUMENTO:" + ticket["customer"]["document"].Value<string>().PadRight(COST_TAM));
-                report.AppendLine("---------------------------------------");
-                report.AppendLine(" ");
+                report.AppendLine("TIPO DE ENVASE:" + ticket["boxtype"].Value<string>().PadRight(RestApiConstant.COST_TAM));
+                report.AppendLine("FECHA DE ENTREGA:" + Convert.ToDateTime(ticket["deliverydate"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
 
-                report.AppendLine(" ");
+                report.AppendLine(RestApiConstant.BlankSpace);
+                report.AppendLine("---------------------------------------");
+                report.AppendLine("NOMBRE:" + ticket["customer"]["name"].Value<string>().PadRight(RestApiConstant.COST_TAM));
+                report.AppendLine("DOCUMENTO:" + ticket["customer"]["document"].Value<string>().PadRight(RestApiConstant.COST_TAM));
+                report.AppendLine("---------------------------------------");
+                report.AppendLine(RestApiConstant.BlankSpace);
+
+                report.AppendLine(RestApiConstant.BlankSpace);
                 report.AppendLine("      GRACIAS POR SU VISITA          ");
-                report.AppendLine(" ");
-                report.AppendLine(" ");
+                report.AppendLine(RestApiConstant.BlankSpace);
+                report.AppendLine(RestApiConstant.BlankSpace);
 
                 if (ticket["cashier"] != null)
                 {
-                    report.AppendLine("Atendido Por:" + ticket["cashier"].Value<string>().PadRight(COST_TAM));
+                    report.AppendLine("Atendido Por:" + ticket["cashier"].Value<string>().PadRight(RestApiConstant.COST_TAM));
                 }
-                report.AppendLine(" ");
-                report.AppendLine(" ");
+                report.AppendLine(RestApiConstant.BlankSpace);
+                report.AppendLine(RestApiConstant.BlankSpace);
 
                 string strResult = report.ToString().Normalize(NormalizationForm.FormD);
 
@@ -259,30 +215,111 @@ namespace thermalprinting
             }
             return report.ToString();
         }
-        /// <summary>
-        /// Add Pad to both side of the string.
-        /// </summary>
-        /// <param name="source">content to add pad.</param>
-        /// <param name="length">length of the content.</param>
-        /// <returns></returns>
-        private string PadBoth(string source, int length)
-        {
-
-            int spaces = length - source.Length;
-            int padLeft = spaces / 2 + source.Length;
-            return source.PadLeft(padLeft).PadRight(length);
-        }
 
         /// <summary>
-        /// Split a string by chunk site.
+        /// Generate the invoice report.
         /// </summary>
-        /// <param name="str">string to split.</param>
-        /// <param name="maxChunkSize">Maximun chunk size.</param>
-        /// <returns>return string array.</returns>
-        private IEnumerable<string> SplitLine(string str, int maxChunkSize)
+        /// <param name="data">Json data</param>
+        /// <returns>string report.</returns>
+        public string generateReceipts()
         {
-            for (int i = 0; i < str.Length; i += maxChunkSize)
-                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
+            StringBuilder report = new StringBuilder();
+            try
+            {
+                JToken receipt = Data.GetValue("receipt");
+
+                const int first_col_pad = 18;
+                const int second_col_pad = 8;
+                const int third_col_pad = 10;
+                const int name_length = 16;
+
+                report.Append(GetHeader());
+
+                if (receipt["date"] != null)
+                {
+                    report.AppendLine(Convert.ToDateTime(receipt["date"].Value<string>()).ToString("dd/MM/yyyy hh:mm:ss").PadRight(RestApiConstant.COST_TAM));
+                }
+
+                if (receipt["ticketnumber"] != null)
+                {
+                    report.AppendLine(("Venta No:" + receipt["ticketnumber"].Value<string>()).PadRight(RestApiConstant.COST_TAM));
+                }
+
+                report.AppendLine(RestApiConstant.BlankSpace);
+                string strLineaFinal = "CUOTA A PAGAR".PadRight(name_length, ' ');
+                report.Append(strLineaFinal.PadRight(first_col_pad));
+
+
+                report.Append(string.Format("{0:N2}", "0").PadLeft(second_col_pad));
+                report.AppendLine(string.Format("{0:N2}", receipt["totalAmount"].Value<string>()).PadLeft(third_col_pad));
+
+
+                report.AppendLine(RestApiConstant.BlankSpace);
+                strLineaFinal = "TOTAL PAGADO".PadRight(first_col_pad, ' ');
+                report.Append(strLineaFinal.PadRight(first_col_pad));
+                report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
+                report.AppendLine(string.Format("{0:N2}", 0).PadLeft(third_col_pad));
+
+                strLineaFinal = "CAMBIO".PadRight(name_length, ' ');
+                report.Append(strLineaFinal.PadRight(first_col_pad));
+                report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
+                report.AppendLine(string.Format("{0:N2}", 0).PadLeft(third_col_pad));
+                report.AppendLine("---------------------------------------");
+
+                report.AppendLine(RestApiConstant.BlankSpace);
+                strLineaFinal = "SALDO CONTABLE".PadRight(name_length, ' ');
+                report.Append(strLineaFinal.PadRight(first_col_pad));
+
+
+                report.Append(string.Format("{0:N2}", "0").PadLeft(second_col_pad));
+                report.AppendLine(string.Format("{0:N2}", receipt["totalPayment"].Value<string>()).PadLeft(third_col_pad));
+
+                if (receipt["data"]["payments"] != null)
+                {
+                    JToken itemP = receipt["data"]["payments"];
+                    if (itemP["data"]["payments"] != null)
+                    {
+                        foreach (JToken item in itemP["data"]["payments"]["details"])
+                        {
+                            report.Append(item["payment"]["paymentmethod"]["text"].Value<string>().PadRight(name_length, ' ').PadRight(first_col_pad));
+                            report.Append(RestApiConstant.BlankSpace.PadLeft(second_col_pad));
+                            report.AppendLine(string.Format("{0:N2}", item["payment"]["amount"].Value<string>()).PadLeft(third_col_pad));
+                        }
+                    }
+                }
+                if (receipt["data"] != null)
+                {
+                    report.AppendLine("---------------------------------------");
+                    report.AppendLine(RestApiConstant.BlankSpace);
+                    report.AppendLine("---------------------------------------");
+                    report.AppendLine("NOMBRE:" + receipt["data"]["customer"]["name"].Value<string>().PadRight(RestApiConstant.COST_TAM));
+                    report.AppendLine("DOCUMENTO:" + receipt["data"]["customer"]["rnc"].Value<string>().PadRight(RestApiConstant.COST_TAM));
+                    report.AppendLine("---------------------------------------");
+                    report.AppendLine(RestApiConstant.BlankSpace);
+                }
+                report.AppendLine(RestApiConstant.BlankSpace);
+                report.AppendLine("      GRACIAS POR SU VISITA          ");
+                report.AppendLine(RestApiConstant.BlankSpace);
+                report.AppendLine(RestApiConstant.BlankSpace);
+
+                if (receipt["data"] != null)
+                {
+                    if (receipt["data"]["cashier"] != null)
+                    {
+                        report.AppendLine("Atendido Por:" + receipt["data"]["cashier"]["name"].Value<string>().PadRight(RestApiConstant.COST_TAM));
+                    }
+                }
+                report.AppendLine(RestApiConstant.BlankSpace);
+                report.AppendLine(RestApiConstant.BlankSpace);
+
+                string strResult = report.ToString().Normalize(NormalizationForm.FormD);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error generating report: " + ex.Message);
+            }
+            return report.ToString();
         }
     }
 }

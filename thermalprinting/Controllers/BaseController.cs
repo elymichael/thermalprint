@@ -12,7 +12,7 @@
         /// check if the json is well formed.
         /// </summary>
         /// <param name="data">Json data object</param>
-        protected void load(JObject data)
+        protected void Load(JObject data)
         {
             if (data == null)
             {
