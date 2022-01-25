@@ -10,65 +10,65 @@ To see the configuration, goto `<remoteaddress>`/swagger/ to see the functions.
 ### Example
 ```json
 {
-"company":{
-"CompanyID":1,
-"Name":"Facultad de Odontologia",
-"data":{
-"address":"Calle Cristóbal de Llerenas, Campus Alma Mater, Zona Universitaria.",
-"phone":"(809) 535-8274 ext. 3184",
-"contact":"Angel Nadal",
-"rnc":"00117292896",
-"companyGroupID":1
+  "company":{
+  "CompanyID":1,
+  "Name":"Facultad de Odontologia",
+  "data":{
+  "address":"Calle Cristóbal de Llerenas, Campus Alma Mater, Zona Universitaria.",
+  "phone":"(809) 535-8274 ext. 3184",
+  "contact":"Angel Nadal",
+  "rnc":"00117292896",
+  "companyGroupID":1
 }
 },
-"sales":{
-"salesOrderControlID":21,
-"userID":1,
-"companyID":1,
-"patientID":3,
-"totalAmount":300,
-"quantity":3,
-"statusId":"P",
-"data":{
-"invoiceid":"3u8g5yrll4kb6m4ynw",
-"payments":{
-"taxreceiptnumbertype":"00",
-"details":[
-{
-"payment":{
-"amount":300,
-"paymentmethod":{
-"value":"E",
-"text":"Efectivo"
-}
-}
-}
-]
+  "sales":{
+  "salesOrderControlID":21,
+  "userID":1,
+  "companyID":1,
+  "patientID":3,
+  "totalAmount":300,
+  "quantity":3,
+  "statusId":"P",
+  "data":{
+    "invoiceid":"3u8g5yrll4kb6m4ynw",
+    "payments":{
+      "taxreceiptnumbertype":"00",
+      "details":[
+        {
+        "payment":{
+          "amount":300,
+            "paymentmethod":{
+              "value":"E",
+              "text":"Efectivo"
+            }
+          }
+        }
+    ]
 },
 "items":[
-{
-"productID":19,
-"name":"Equilibración de oclusión",
-"price":"100",
-"description":"Equilibración de oclusión",
-"quantity":3,
-"itbis":0
-}
+  {
+    "productID":19,
+    "name":"Equilibración de oclusión",
+    "price":"100",
+    "description":"Equilibración de oclusión",
+    "quantity":3,
+    "itbis":0
+  }
 ],
 "customer":{
-"id":3,
-"rnc":"076-45784575-4",
-"name":"Ramón Del Orbe"
+  "id":3,
+  "rnc":"076-45784575-4",
+  "name":"Ramón Del Orbe"
 },
-"batch":{
-"id":1,
-"name":"Caja 01"
-},
-"cashier":{
-"name":"Ely Michael Núñez De la Rosa"
-}
-}
-}
+  "batch":{
+    "id":1,
+    "name":"Caja 01"
+  },
+  "cashier":{
+    "name":"Ely Michael Núñez De la Rosa"
+      }
+    }
+  }
 }
 ```
 ## Fix Errors in the web API.
